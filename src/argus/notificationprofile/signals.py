@@ -1,5 +1,5 @@
 from argus.auth.models import User
-from .models import TimeRecurrence, Timeslot
+from .models import DestinationConfig, Media, TimeRecurrence, Timeslot
 
 __all__ = [
     "create_default_timeslot",
@@ -16,4 +16,16 @@ def create_default_timeslot(sender, instance: User, created, raw, *args, **kwarg
         days=[day for day in TimeRecurrence.Day.values],
         start=TimeRecurrence.DAY_START,
         end=TimeRecurrence.DAY_END,
+    )
+
+
+# Create default DestinationConfig when a user is created
+def create_default_destination_config(sender, instance: User, created, raw, *args, **kwargs):
+    if raw or not created or instance.destination_configs.exists():
+        return
+
+    DestinationConfig.objects.create(
+        user=instance,
+        media=Media.objects.get(slug="email"),
+        settings={"email_address": instance.email},
     )

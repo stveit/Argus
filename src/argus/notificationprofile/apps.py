@@ -10,9 +10,10 @@ class NotificationprofileConfig(AppConfig):
 
     def ready(self):
         # Signals
-        from .signals import create_default_timeslot
+        from .signals import create_default_timeslot, create_default_destination_config
 
         post_save.connect(create_default_timeslot, "argus_auth.User")
+        post_save.connect(create_default_destination_config, "argus_auth.User")
 
         # Settings validation
         from .checks import fallback_filter_check

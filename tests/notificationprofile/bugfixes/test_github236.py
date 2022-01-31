@@ -7,6 +7,7 @@ from argus.incident.models import create_fake_incident, get_or_create_default_in
 from argus.notificationprofile.factories import (
     TimeslotFactory,
     NotificationProfileFactory,
+    DestinationConfigFactory,
     FilterFactory,
     MaximalTimeRecurrenceFactory,
     MinimalTimeRecurrenceFactory,
