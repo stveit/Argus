@@ -9,7 +9,7 @@ from rest_framework import serializers
 
 from argus.auth.factories import PersonUserFactory
 from argus.notificationprofile.factories import TimeslotFactory
-from argus.notificationprofile.models import Timeslot
+from argus.notificationprofile.models import DestinationConfig, Timeslot
 from argus.notificationprofile.serializers import TimeslotSerializer
 
 
@@ -128,3 +128,15 @@ class TimeslotSerializerTests(TestCase):
         # serializer.create works on already validated data
         with self.assertRaises(IntegrityError):
             obj = serializer.update(timeslot, validated_data)
+
+
+class DestinationConfigSerializerTest(TestCase):
+    def setUp(self):
+        self.user = PersonUserFactory()
+        # When creating a User which is a person, we also create a default Timeslot and a default DestinationConfig
+        self.default_timeslot = Timeslot.objects.get(user=self.user)
+        self.default_destinations = DestinationConfig.objects.get(user=self.user)
+        self.request_factory = APIRequestFactory()
+
+    def test_default_destination_is_created(self):
+        self.assertTrue(self.default_destinations)

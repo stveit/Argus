@@ -29,3 +29,18 @@ def create_default_destination_config(sender, instance: User, created, raw, *arg
         media=Media.objects.get(slug="email"),
         settings={"email_address": instance.email},
     )
+
+
+# Update the email address in the synced destination config when a user logs in
+def update_email_address(sender, request, user: User, *args, **kwargs):
+    email_destinations = user.destinations.filter(media__slug="email")
+
+    for destination in email_destinations:
+        if destination.settings["synced"] == True:
+            if not user.phone_number:
+                destination.delete()
+                return
+            if not destination.settings["phone_number"] == user.phone_number:
+                destination.settings["phone_number"] = user.phone_number
+                destination.save()
+            return
