@@ -1,8 +1,6 @@
 from django.db import IntegrityError
 from rest_framework import fields, serializers
 
-from argus.auth.serializers import PhoneNumberSerializer
-
 from ..models import NotificationProfile
 from ..serializers import (
     TimeslotSerializer,
@@ -13,8 +11,7 @@ from ..serializers import (
 class ResponseNotificationProfileSerializerV1(serializers.ModelSerializer):
     timeslot = TimeslotSerializer()
     filters = FilterSerializer(many=True)
-    phone_number = PhoneNumberSerializer(allow_null=True, required=False)
-    media = fields.MultipleChoiceField(choices=NotificationProfile.Media.choices, source="media_v1")
+    # phone_number = serializers.SerializerMethodField("get_phone_number")
 
     class Meta:
         model = NotificationProfile
@@ -22,16 +19,19 @@ class ResponseNotificationProfileSerializerV1(serializers.ModelSerializer):
             "pk",
             "timeslot",
             "filters",
-            "media",
-            "phone_number",
             "active",
         ]
         # "pk" needs to be listed, as "timeslot" is the actual primary key
         read_only_fields = ["pk"]
 
+    def get_phone_number(self, profile: NotificationProfile):
+        if profile.destinations.filter(media__slug="sms").exists():
+            return profile.destinations.filter(media__slug="sms").order_by("pk").first().settings["phone_number"]
+        return None
+
 
 class RequestNotificationProfileSerializerV1(serializers.ModelSerializer):
-    media = fields.MultipleChoiceField(choices=NotificationProfile.Media.choices, source="media_v1")
+    # phone_number = fields.CharField(allow_null=True, required=False)
 
     class Meta:
         model = NotificationProfile
@@ -39,8 +39,6 @@ class RequestNotificationProfileSerializerV1(serializers.ModelSerializer):
             "pk",
             "timeslot",
             "filters",
-            "media",
-            "phone_number",
             "active",
         ]
         # "pk" needs to be listed, as "timeslot" is the actual primary key
