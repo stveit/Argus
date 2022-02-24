@@ -34,6 +34,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         )
         self.notification_profile1 = NotificationProfile.objects.create(user=self.user1, timeslot=self.timeslot1)
         self.notification_profile1.filters.add(filter1)
+        self.notification_profile1.destinations.set(self.user1.destination_configs.all())
 
     def teardown(self):
         connect_signals()
@@ -56,8 +57,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
             {
                 "timeslot": self.timeslot2.pk,
                 "filters": [f.pk for f in self.notification_profile1.filters.all()],
-                "media": self.notification_profile1.media_v1,
-                "phone_number": self.notification_profile1.phone_number_id,
                 "active": self.notification_profile1.active,
             },
         )
