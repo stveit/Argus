@@ -12,6 +12,7 @@ COPY requirements/*.txt /argus/requirements/
 
 WORKDIR /argus
 RUN pip install -r requirements.txt -r /argus/requirements/dev.txt
+RUN pip install argus-server
 
 ENV PYTHONPATH=/argus/src
 ENV PYTHONDONTWRITEBYTECODE=1
