@@ -69,7 +69,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         response = self.user1_rest_client.get(
             reverse("v1:notification-profile:notificationprofile-incidents", args=[self.notification_profile1.pk])
         )
-        response.render()
         self.assertEqual(response.content, self.incident1_json)
 
     def test_notification_profile_can_properly_change_timeslot(self):
@@ -105,13 +104,11 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         response = self.user1_rest_client.get(
             reverse("v1:notification-profile:notificationprofile-detail", args=[profile_pk])
         )
-        response.render()
         self.assertEqual(response.data["pk"], profile_pk)
 
     def test_get_notification_profiles(self):
         # /api/v1/notificationprofiles/
         response = self.user1_rest_client.get(reverse("v1:notification-profile:notificationprofile-list"))
-        response.render()
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.notification_profile1.pk)
 
@@ -127,7 +124,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "active": self.notification_profile1.active,
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 201)
         self.assertTrue(NotificationProfile.objects.filter(pk=response.data.get("pk")))
 
@@ -143,7 +139,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "active": self.notification_profile1.active,
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["media"], self.media)
 
@@ -153,14 +148,12 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         response = self.user1_rest_client.delete(
             reverse("v1:notification-profile:notificationprofile-detail", args=[profile_pk])
         )
-        response.render()
         self.assertEqual(response.status_code, 204)
         self.assertFalse(NotificationProfile.objects.filter(pk=profile_pk).first())
 
     def test_get_timeslots(self):
         # /api/v1/notificationprofiles/timeslots/
         response = self.user1_rest_client.get(reverse("v1:notification-profile:timeslot-list"))
-        response.render()
         default_timeslot = Timeslot.objects.filter(user=self.user1, name="All the time").first()
         timeslot_pks = set([default_timeslot.pk, self.timeslot1.pk, self.timeslot2.pk])
         response_pks = set([timeslot["pk"] for timeslot in response.data])
@@ -175,7 +168,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "time_recurrences": [{"days": [1, 2, 3], "start": "10:00:00", "end": "20:00:00"}],
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Timeslot.objects.filter(user=self.user1, name="test-timeslot").first())
 
@@ -188,7 +180,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "time_recurrences": [{"days": [1, 2, 3], "start": "20:00:00", "end": "10:00:00"}],
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 400)
         self.assertFalse(Timeslot.objects.filter(user=self.user1, name="test-timeslot").first())
 
@@ -196,7 +187,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         timeslot_pk = self.timeslot1.pk
         # /api/v1/notificationprofiles/timeslots/<int:pk>/
         response = self.user1_rest_client.get(reverse("v1:notification-profile:timeslot-detail", args=[timeslot_pk]))
-        response.render()
         self.assertEqual(response.data["pk"], timeslot_pk)
 
     def test_update_timeslot_name(self):
@@ -207,7 +197,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
             reverse("v1:notification-profile:timeslot-detail", args=[timeslot_pk]),
             {"name": new_name, "time_recurrences": [{"days": [1, 2, 3], "start": "10:00:00", "end": "20:00:00"}]},
         )
-        response.render()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Timeslot.objects.filter(pk=timeslot_pk).first().name, new_name)
 
@@ -221,21 +210,18 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "time_recurrences": [{"days": [1, 2, 3], "start": "20:00:00", "end": "10:00:00"}],
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 400)
 
     def test_delete_timeslot(self):
         timeslot_pk = self.timeslot1.pk
         # /api/v1/notificationprofiles/timeslots/<int:pk>/
         response = self.user1_rest_client.delete(reverse("v1:notification-profile:timeslot-detail", args=[timeslot_pk]))
-        response.render()
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Timeslot.objects.filter(pk=timeslot_pk).first())
 
     def test_get_filters(self):
         # /api/v1/notificationprofiles/filters/
         response = self.user1_rest_client.get(reverse("v1:notification-profile:filter-list"))
-        response.render()
         self.assertTrue(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.filter1.pk)
 
@@ -248,7 +234,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "filter_string": f'{{"sourceSystemIds": [{self.source1.pk}], "tags": ["key1=value"]}}',
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Filter.objects.filter(user=self.user1, name="test-filter").first())
 
@@ -256,7 +241,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         filter_pk = self.filter1.pk
         # /api/v1/notificationprofiles/filters/<int:pk>/
         response = self.user1_rest_client.get(reverse("v1:notification-profile:filter-detail", args=[filter_pk]))
-        response.render()
         self.assertEqual(response.data["pk"], filter_pk)
 
     def test_update_filter_name(self):
@@ -270,7 +254,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
                 "filter_string": f'{{"sourceSystemIds": [{self.source1.pk}], "tags": ["key1=value"]}}',
             },
         )
-        response.render()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Filter.objects.filter(pk=filter_pk).first().name, new_name)
 
@@ -278,7 +261,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         filter_pk = self.filter2.pk
         # /api/v1/notificationprofiles/filters/<int:pk>/
         response = self.user1_rest_client.delete(reverse("v1:notification-profile:filter-detail", args=[filter_pk]))
-        response.render()
         self.assertEqual(response.status_code, 204)
         self.assertFalse(Filter.objects.filter(pk=filter_pk).first())
 
@@ -286,7 +268,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         filter_pk = self.filter1.pk
         # /api/v1/notificationprofiles/filters/<int:pk>/
         response = self.user1_rest_client.delete(reverse("v1:notification-profile:filter-detail", args=[filter_pk]))
-        response.render()
         self.assertEqual(response.status_code, 400)
         self.assertTrue(Filter.objects.filter(pk=filter_pk).first())
 
@@ -296,6 +277,5 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
             reverse("v1:notification-profile:filter-preview"),
             {"sourceSystemIds": [self.source1.pk], "tags": [str(self.tag1)]},
         )
-        response.render()
         self.assertTrue(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.incident1.pk)
