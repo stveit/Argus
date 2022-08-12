@@ -67,6 +67,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         response = self.user1_rest_client.get(
             f"/api/v1/notificationprofiles/{self.notification_profile1.pk}/incidents/"
         )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, self.incident1_json)
 
     def test_can_update_timeslot_for_notification_profile_with_valid_values(self):
@@ -103,10 +104,12 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
     def test_can_get_notification_profile(self):
         profile_pk = self.notification_profile1.pk
         response = self.user1_rest_client.get(f"/api/v1/notificationprofiles/{profile_pk}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["pk"], profile_pk)
 
     def test_can_get_all_notification_profiles(self):
         response = self.user1_rest_client.get("/api/v1/notificationprofiles/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.notification_profile1.pk)
 
@@ -146,6 +149,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
 
     def test_can_get_all_timeslots(self):
         response = self.user1_rest_client.get("/api/v1/notificationprofiles/timeslots/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         default_timeslot = self.user1.timeslots.get(name="All the time")
         timeslot_pks = set([default_timeslot.pk, self.timeslot1.pk, self.timeslot2.pk])
         response_pks = set([timeslot["pk"] for timeslot in response.data])
@@ -176,6 +180,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
     def test_can_get_timeslot(self):
         timeslot_pk = self.timeslot1.pk
         response = self.user1_rest_client.get(f"/api/v1/notificationprofiles/timeslots/{timeslot_pk}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["pk"], timeslot_pk)
 
     def test_can_update_timeslot_name_with_valid_values(self):
@@ -207,6 +212,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
 
     def test_can_get_all_filters(self):
         response = self.user1_rest_client.get("/api/v1/notificationprofiles/filters/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.filter1.pk)
 
@@ -224,6 +230,7 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
     def test_can_get_filter(self):
         filter_pk = self.filter1.pk
         response = self.user1_rest_client.get(f"/api/v1/notificationprofiles/filters/{filter_pk}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["pk"], filter_pk)
 
     def test_can_update_filter_name_with_valid_values(self):
@@ -256,5 +263,6 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
             "/api/v1/notificationprofiles/filterpreview/",
             {"sourceSystemIds": [self.source1.pk], "tags": [str(self.tag1)]},
         )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(len(response.data), 1)
         self.assertEqual(response.data[0]["pk"], self.incident1.pk)
