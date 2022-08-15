@@ -247,10 +247,14 @@ class ViewTests(APITestCase, IncidentAPITestCaseHelper):
         self.assertEqual(Filter.objects.get(pk=filter_pk).name, new_name)
 
     def test_can_delete_unused_filter(self):
-        filter_pk = self.filter2.pk
-        response = self.user1_rest_client.delete(f"/api/v1/notificationprofiles/filters/{filter_pk}/")
+        filter = FilterFactory(
+            user=self.user1,
+            name="Unused filter",
+            filter_string=f'{{"sourceSystemIds": [{self.source1.pk}]}}',
+        )
+        response = self.user1_rest_client.delete(f"/api/v1/notificationprofiles/filters/{filter.pk}/")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Filter.objects.filter(pk=filter_pk).exists())
+        self.assertFalse(Filter.objects.filter(pk=filter.pk).exists())
 
     def test_cannot_delete_used_filter(self):
         filter_pk = self.filter1.pk
