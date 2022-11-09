@@ -187,7 +187,7 @@ REST_FRAMEWORK = {
         "argus.auth.authentication.ExpiringTokenAuthentication",
         # For BrowsableAPIRenderer
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "argus.auth.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": (

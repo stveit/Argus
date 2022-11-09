@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.authentication import JWTAuthentication as SimpleJWTAuthentication
 
 
 class ExpiringTokenAuthentication(TokenAuthentication):
@@ -17,3 +18,10 @@ class ExpiringTokenAuthentication(TokenAuthentication):
             raise AuthenticationFailed("Token has expired.")
 
         return user, token
+
+class JWTAuthentication(SimpleJWTAuthentication):
+    def authenticate(self, request):
+        user, validated_token = super().authenticate(request)
+        if 'nbf' not in validated_token:
+            raise AuthenticationFailed("Token has no 'nbf' claim")
+        return user, validated_token
