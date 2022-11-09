@@ -187,6 +187,7 @@ REST_FRAMEWORK = {
         "argus.auth.authentication.ExpiringTokenAuthentication",
         # For BrowsableAPIRenderer
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": (
@@ -301,3 +302,11 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = SOCIAL_AUTH_LOGIN_REDIRECT_URL
 #
 # SOCIAL_AUTH_DATAPORTEN_FEIDE_KEY = SOCIAL_AUTH_DATAPORTEN_KEY
 # SOCIAL_AUTH_DATAPORTEN_FEIDE_SECRET = SOCIAL_AUTH_DATAPORTEN_SECRET
+
+with open(get_str_env("JWT_PUBLIC_KEY")) as f:
+    _verifying_key = f.read()
+
+SIMPLE_JWT = {
+    'ALGORITHM': 'RS256',
+    'VERIFYING_KEY': _verifying_key,
+}
