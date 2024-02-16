@@ -30,7 +30,7 @@ key_value_re = _lazy_re_compile(r"^[a-z0-9_]+=.+?\Z")
 key_value_validator = RegexValidator(
     key_value_re,
     message=f'Enter a valid key-value construct: "key=value", where key and value are strings.'
-            f'The key must consist of lowercase letters, numbers and underscores.',
+            f'The key can consist of lowercase letters, numbers and underscores.',
     code="invalid",
 )
 
