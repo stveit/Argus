@@ -85,8 +85,11 @@ def update_settings(current_settings, app_settings, override=False):
         INSTALLED_APPS = _app_names + INSTALLED_APPS
     else:
         INSTALLED_APPS += _app_names
+    current_settings["INSTALLED_APPS"] = INSTALLED_APPS
     TEMPLATES = update_context_processors_list(TEMPLATES, app_settings)
+    current_settings["TEMPLATES"] = TEMPLATES
     MIDDLEWARE = update_middleware_list(MIDDLEWARE, app_settings)
+    current_settings["MIDDLEWARE"] = MIDDLEWARE
 
     for setting, value in get_settings(app_settings).items():
         current_settings[setting] = value
