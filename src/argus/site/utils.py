@@ -88,5 +88,5 @@ def update_settings(current_settings, app_settings, override=False):
     TEMPLATES = update_context_processors_list(TEMPLATES, app_settings)
     MIDDLEWARE = update_middleware_list(MIDDLEWARE, app_settings)
 
-    for setting, value in get_settings(app_settings):
+    for setting, value in get_settings(app_settings).items():
         current_settings[setting] = value
