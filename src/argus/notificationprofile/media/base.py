@@ -70,7 +70,7 @@ class NotificationMedium(ABC):
         cls, data: dict, user: User, instance: DestinationConfig = None, exception_class=ValidationError
     ) -> CommonDestinationConfigForm:
         if instance:
-            if data.get("media", "") != instance.media.slug:
+            if data.get("media", "") != instance.media:
                 raise exception_class(cls.error_messages["readonly_media"])
             form = CommonDestinationConfigForm(data, instance=instance)
             if instance.user != user:
@@ -109,7 +109,7 @@ class NotificationMedium(ABC):
         if cls.has_duplicate(user.destinations, settings):
             raise exception_class(cls.MEDIA_SETTINGS_KEY, f"{cls.MEDIA_NAME} already exists")
 
-        return form.cleaned_data
+        return form
 
     @classmethod
     def clean(cls, form: forms.Form, instance: DestinationConfig = None) -> forms.Form:
